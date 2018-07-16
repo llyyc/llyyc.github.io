@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>llyyc的个人博客</title>
+    <link>https://llyyc.github.io/</link>
+    <description>Recent content on llyyc的个人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 17 Jul 2018 01:38:23 +0800</lastBuildDate>
+    
+        <atom:link href="https://llyyc.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>由变量类型、装箱拆箱、到ref/out到堆栈到GC</title>
+      <link>https://llyyc.github.io/post/20180717/</link>
+      <pubDate>Tue, 17 Jul 2018 01:38:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180717/</guid>
+      
+        <description>
+
+&lt;h2 id=&#34;1-变量类型&#34;&gt;1.变量类型&lt;/h2&gt;
+
+&lt;p&gt;C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,string,object 后两个比较特殊，后面会讲)。值类型的值是他本身，而引用类型则是类似保存了内存地址。show you the code。&lt;/p&gt;
+
+&lt;p&gt;值类型:
+ &amp;ldquo;&amp;lsquo;cs
+    public struct ValueTyepTest
+    {
+       public int iValue;
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ValueTyepTest valueType1 = new ValueTyepTest();
+            valueType1.iValue = 1;
+            ValueTyepTest valueType2 = valueType1;
+            valueType1.iValue = 2;
+            Console.WriteLine(valueType2.iValue);
+            Console.ReadLine();&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;    }
+}&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;rdquo;&amp;rsquo;
+输出结果是1。
+&amp;ldquo;&amp;lsquo;cs
+valueType1赋值给valueType2之后，两者没有关系了，各自的变化互不影响。&lt;/p&gt;
+
+&lt;p&gt;引用类型：
+  public class ValueTyepTest
+    {
+       public int iValue;
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ValueTyepTest valueType1 = new ValueTyepTest();
+            valueType1.iValue = 1;
+            ValueTyepTest valueType2 = valueType1;
+            valueType1.iValue = 2;
+            Console.WriteLine(valueType2.iValue);
+            Console.ReadLine();&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;    }
+}&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;rdquo;&amp;rsquo;
+输出结果是2。&lt;/p&gt;
+
+&lt;p&gt;这里只是把struct变成了class，变量类型则从值类型变为了引用类型。引用类型存的是变量的引用，我们这就把他当作地址看。valueType1存储了iValue=1的地址,valueType2=valueType1则使valueType2也指向了这段地址。valueType2.iValue=2使这段地址的iValue=2。输出结果就变成了2.&lt;/p&gt;
+
+&lt;h2 id=&#34;2-装箱拆箱&#34;&gt;2.装箱拆箱&lt;/h2&gt;
+
+&lt;p&gt;装箱就是把值类型封装为object的过程，拆箱则是相反的过程,以下是microsoft C#编程指南的示例代码:
+装箱:
+&amp;ldquo;&amp;lsquo;cs
+int i = 123;
+// The following line boxes i.
+object o = i;&lt;br /&gt;
+拆箱:
+o = 123;
+i = (int)o;  // unboxing
+&amp;ldquo;&amp;rsquo;&lt;/p&gt;
+
+&lt;p&gt;装箱可以写成object o = (object) i;  (object)可以省略，但是拆箱的(int)是不能省略的，这里主要还是考虑到类型安全，拆箱必须保证该值变量有足够的空间存储拆箱后得到的值，这里是需要十分注意的。&lt;/p&gt;
+
+&lt;h2 id=&#34;3-ref-out&#34;&gt;3.ref/out&lt;/h2&gt;
+
+&lt;p&gt;在C#中，方法的参数传递默认是按值传递的。而ref/out这两个关键字就可以使值类型变为引用传递。&lt;/p&gt;
+
+&lt;p&gt;值类型值传递:
+&amp;ldquo;&amp;lsquo;cs
+        static void Change(int i)
+        {
+            i += i;
+            Console.WriteLine(&amp;ldquo;Change： &amp;rdquo; + i);
+        }
+        static void Main(string[] args)
+        {
+            int n = 1;
+            Console.WriteLine(&amp;ldquo;Change Before:  &amp;ldquo; + n);
+            Change(n);
+            Console.WriteLine(&amp;ldquo;Change After:  &amp;ldquo; + n);
+            Console.ReadLine();&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;    }
+    &amp;#39;&amp;#39;&amp;#39;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;输出：
+Change Before:  1
+Change： 2
+Change After:  1&lt;/p&gt;
+
+&lt;p&gt;值传递就是把值赋给了形参，形参在作用域内相当于一个新的变量。在作用域内改变形参的值，不会改变外面实参的值。上面我们用值类型进行值传递，我们下面用引用类型进行值传递。
+引用类型值传递:
+&amp;ldquo;&amp;lsquo;cs
+    class  RefType
+    {
+       public int value;
+    }
+    class Program
+    {&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;    static void Change(RefType i)
+    {
+        i.value = 999;
+        i = new RefType();
+        i.value = 2;
+        Console.WriteLine(&amp;#34;Change： &amp;#34; + i.value);
+    }
+    static void Main(string[] args)
+    {
+        RefType n = new RefType();
+        n.value = 1;
+        Console.WriteLine(&amp;#34;Change Before:  &amp;#34; + n.value);
+        Change(n);
+        Console.WriteLine(&amp;#34;Change After:  &amp;#34; + n.value);
+        Console.ReadLine();
+
+    }
+}
+&amp;#39;&amp;#39;&amp;#39;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;输出：
+Change Before:  1
+Change： 2
+Change After:  999&lt;/p&gt;
+
+&lt;p&gt;我们传了一个地址到方法里，在方法里把这个地址的value变量改为了999，然后改变了方法内作为形参的引用变量的值，把这个引用类型指向了新的引用。结果并没有影响到实参。这里不能被输出的999混淆，输出999只是因为地址存储的变量变成了999，并不是通过改变原来的引用而改变输出值。&lt;/p&gt;
+
+&lt;p&gt;值类型引用传递：
+&amp;ldquo;&amp;lsquo;cs
+        static void Change(ref int i)
+        {&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;        i += i;
+        Console.WriteLine(&amp;#34;Change： &amp;#34; + i);
+    }
+    static void Main(string[] args)
+    {
+        int n = 1;           
+        Console.WriteLine(&amp;#34;Change Before:  &amp;#34; + n);
+        Change(ref n);
+        Console.WriteLine(&amp;#34;Change After:  &amp;#34; + n);
+        Console.ReadLine();
+
+    }&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;rdquo;&amp;rsquo;
+输出：
+Change Before:  1
+Change： 2
+Change After:  2
+可以看到我们通过改变了方法里形参的值而改变了实参的值。方法里的i变量实际不是int类型，而是实参n的引用。
+引用类型引用传递:
+&amp;ldquo;&amp;rsquo;
+    class RefType
+    {
+        public int value;
+    }
+    class Program
+    {&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;    static void Change(ref RefType i)
+    {
+        i.value = 999;
+        i = new RefType();
+        i.value = 2;
+        Console.WriteLine(&amp;#34;Change： &amp;#34; + i.value);
+    }
+    static void Main(string[] args)
+    {
+        RefType n = new RefType();
+        n.value = 1;
+        Console.WriteLine(&amp;#34;Change Before:  &amp;#34; + n.value);
+        Change(ref n);
+        Console.WriteLine(&amp;#34;Change After:  &amp;#34; + n.value);
+        Console.ReadLine();
+
+    }
+}&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;rdquo;&amp;rsquo;
+输出：
+Change Before:  1
+Change： 2
+Change After:  2
+这里方法里的i变成了实参n的引用，改变i即改变了n。&lt;/p&gt;
+
+&lt;p&gt;值传递可以看成新建了一个变量，他的值与实参的值一样，而形参如何改变是无法影响到实参的。 引用传递则是相当于形参就是实参，形参怎么改变实参会跟着变化。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-堆栈&#34;&gt;4.堆栈&lt;/h2&gt;
+
+&lt;p&gt;C#里面的栈叫做堆栈，堆则一般称作托管堆。值类型存储在栈，引用类类型则是在托管堆中。系统把可用内存分为两部分，分别供堆和栈使用。&lt;/p&gt;
+
+&lt;p&gt;堆栈的工作方式：
+&amp;ldquo;&amp;lsquo;cs
+{
+    int a;
+    {
+        int b;
+    }
+}
+&amp;ldquo;&amp;rsquo;
+比如上面的代码,a、b在创建时都在栈中占用了4个字节。而当b初了作用域之后，则b的所占用的内存进行释放。堆栈是向下填充的，即从高地址向低地址填充。当数据入栈后，堆栈指针就会随之调整，指向下一个自由空间。比如我们起始的地址为600000,a先声明，堆栈指针指向了599996,当声明时指向599992。当b出作用域后，指针指向599996。&lt;/p&gt;
+
+&lt;p&gt;托管堆工作方式：
+&amp;ldquo;&amp;lsquo;cs
+    class RefType
+    {
+        public int value;
+        public int i;
+    }&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;static void Main(string[] args)
+{
+    RefType n；
+    n = new RefType();
+}&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;rdquo;&amp;rsquo;
+    上面RefType n；中，声明了一个引用类型，此时并没有指向引用，这里使用了堆栈来存储引用地址，32位机占用了堆栈4个字节。n = new RefType();则在托管堆中申请了一块连续的内存来保存类。如果我们起始地址为200000，因为类中有两个int类型的值则指针指向了200008。&lt;/p&gt;
+
+&lt;h2 id=&#34;5-gc&#34;&gt;5.GC&lt;/h2&gt;
+
+&lt;p&gt;托管堆如其名，是托管在CLR，由GC进行释放的。
+CLR在运行时管理着一段内存地址空间（虚拟地址空间，在运行中会映射到物理内存地址中），分为“托管堆”和“栈”两部分，栈用于存储值类型数据，它会在方法执行结束后自动销毁其中引用的值类型变量，这一部分不属于垃圾收集的范围。托管堆用于引用类型的变量存储，是GC的主要位置。
+托管堆是一段连续的地址空间，其中所分配出去的空间呈现出类似数组形态的队列结构。当对象不再被引用时，内存被被释放，这样会导致内存变成一块一块的断层。当有新的对象生成时，.Net则需要搜索整个堆才能找到一块足够大的连续的空间。GC就是当释放了能释放的对象，压缩其他对象，使他们都在堆顶。这样所有对象的引用地址都需要更新，当声明新的对象就会快许多。&lt;/p&gt;
+
+&lt;p&gt;上面提到了string类型和object类型是比较特殊的引用类型。这里就可以很好解释了。
+&amp;ldquo;&amp;lsquo;cs
+string str1=&amp;ldquo;hello world&amp;rdquo;;
+string str2=str1;
+str1=&amp;ldquo;hello&amp;rdquo;
+Console.WriteLine(str1+&amp;rdquo; &amp;ldquo;+str2 );
+&amp;ldquo;&amp;rsquo;
+则输出的是 hello hello world。并不是预想中的hello hello。这是因为string在赋值后，在堆中的内存已经是固定的了，再重新赋值所需内存大小发生变化，需要找一块新的连续的堆内存来存储。&lt;/p&gt;
+</description>
+      
+    </item>
+    
+  </channel>
+</rss>

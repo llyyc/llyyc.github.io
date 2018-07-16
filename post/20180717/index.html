@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>由变量类型、装箱拆箱、到ref/out到堆栈到GC - llyyc的个人博客</title>
+  <link rel="alternate" hreflang="en" href="https://llyyc.github.io" />
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="llyyc" />
+  <meta name="description" content="1.变量类型 C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,stri" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.44" />
+
+
+<link rel="canonical" href="https://llyyc.github.io/post/20180717/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+<link href="/dist/jane.min.css?v=2.7.0" rel="stylesheet">
+
+
+
+
+<meta property="og:title" content="由变量类型、装箱拆箱、到ref/out到堆栈到GC" />
+<meta property="og:description" content="1.变量类型 C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,stri" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://llyyc.github.io/post/20180717/" />
+
+
+
+<meta property="article:published_time" content="2018-07-17T01:38:23&#43;08:00"/>
+
+<meta property="article:modified_time" content="2018-03-07T16:01:23&#43;08:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="由变量类型、装箱拆箱、到ref/out到堆栈到GC">
+<meta itemprop="description" content="1.变量类型 C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,stri">
+
+
+<meta itemprop="datePublished" content="2018-07-17T01:38:23&#43;08:00" />
+<meta itemprop="dateModified" content="2018-07-17T01:38:23&#43;08:00" />
+<meta itemprop="wordCount" content="2434">
+
+
+
+<meta itemprop="keywords" content="preview,shortcodes,tag-6," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="由变量类型、装箱拆箱、到ref/out到堆栈到GC"/>
+<meta name="twitter:description" content="1.变量类型 C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,stri"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/categories/">Categories</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+       
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">由变量类型、装箱拆箱、到ref/out到堆栈到GC</h1>
+      
+      <div class="post-meta">
+        <span class="post-time"> 2018-07-17 </span>
+        <div class="post-category">
+            
+              <a href="/categories/docs/"> docs </a>
+            
+              <a href="/categories/shortcodes/"> shortcodes </a>
+            
+              <a href="/categories/index/"> index </a>
+            
+          </div>
+        <span class="more-meta"> 2434 words </span>
+        <span class="more-meta"> 5 min read </span>
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#1-变量类型">1.变量类型</a></li>
+<li><a href="#2-装箱拆箱">2.装箱拆箱</a></li>
+<li><a href="#3-ref-out">3.ref/out</a></li>
+<li><a href="#4-堆栈">4.堆栈</a></li>
+<li><a href="#5-gc">5.GC</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<h2 id="1-变量类型">1.变量类型</h2>
+
+<p>C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,string,object 后两个比较特殊，后面会讲)。值类型的值是他本身，而引用类型则是类似保存了内存地址。show you the code。</p>
+
+<p>值类型:
+ &ldquo;&lsquo;cs
+    public struct ValueTyepTest
+    {
+       public int iValue;
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ValueTyepTest valueType1 = new ValueTyepTest();
+            valueType1.iValue = 1;
+            ValueTyepTest valueType2 = valueType1;
+            valueType1.iValue = 2;
+            Console.WriteLine(valueType2.iValue);
+            Console.ReadLine();</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">    }
+}</pre></td></tr></table>
+</div>
+</div>
+<p>&rdquo;&rsquo;
+输出结果是1。
+&ldquo;&lsquo;cs
+valueType1赋值给valueType2之后，两者没有关系了，各自的变化互不影响。</p>
+
+<p>引用类型：
+  public class ValueTyepTest
+    {
+       public int iValue;
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ValueTyepTest valueType1 = new ValueTyepTest();
+            valueType1.iValue = 1;
+            ValueTyepTest valueType2 = valueType1;
+            valueType1.iValue = 2;
+            Console.WriteLine(valueType2.iValue);
+            Console.ReadLine();</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">    }
+}</pre></td></tr></table>
+</div>
+</div>
+<p>&rdquo;&rsquo;
+输出结果是2。</p>
+
+<p>这里只是把struct变成了class，变量类型则从值类型变为了引用类型。引用类型存的是变量的引用，我们这就把他当作地址看。valueType1存储了iValue=1的地址,valueType2=valueType1则使valueType2也指向了这段地址。valueType2.iValue=2使这段地址的iValue=2。输出结果就变成了2.</p>
+
+<h2 id="2-装箱拆箱">2.装箱拆箱</h2>
+
+<p>装箱就是把值类型封装为object的过程，拆箱则是相反的过程,以下是microsoft C#编程指南的示例代码:
+装箱:
+&ldquo;&lsquo;cs
+int i = 123;
+// The following line boxes i.
+object o = i;<br />
+拆箱:
+o = 123;
+i = (int)o;  // unboxing
+&ldquo;&rsquo;</p>
+
+<p>装箱可以写成object o = (object) i;  (object)可以省略，但是拆箱的(int)是不能省略的，这里主要还是考虑到类型安全，拆箱必须保证该值变量有足够的空间存储拆箱后得到的值，这里是需要十分注意的。</p>
+
+<h2 id="3-ref-out">3.ref/out</h2>
+
+<p>在C#中，方法的参数传递默认是按值传递的。而ref/out这两个关键字就可以使值类型变为引用传递。</p>
+
+<p>值类型值传递:
+&ldquo;&lsquo;cs
+        static void Change(int i)
+        {
+            i += i;
+            Console.WriteLine(&ldquo;Change： &rdquo; + i);
+        }
+        static void Main(string[] args)
+        {
+            int n = 1;
+            Console.WriteLine(&ldquo;Change Before:  &ldquo; + n);
+            Change(n);
+            Console.WriteLine(&ldquo;Change After:  &ldquo; + n);
+            Console.ReadLine();</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">    }
+    &#39;&#39;&#39;</pre></td></tr></table>
+</div>
+</div>
+<p>输出：
+Change Before:  1
+Change： 2
+Change After:  1</p>
+
+<p>值传递就是把值赋给了形参，形参在作用域内相当于一个新的变量。在作用域内改变形参的值，不会改变外面实参的值。上面我们用值类型进行值传递，我们下面用引用类型进行值传递。
+引用类型值传递:
+&ldquo;&lsquo;cs
+    class  RefType
+    {
+       public int value;
+    }
+    class Program
+    {</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">    static void Change(RefType i)
+    {
+        i.value = 999;
+        i = new RefType();
+        i.value = 2;
+        Console.WriteLine(&#34;Change： &#34; + i.value);
+    }
+    static void Main(string[] args)
+    {
+        RefType n = new RefType();
+        n.value = 1;
+        Console.WriteLine(&#34;Change Before:  &#34; + n.value);
+        Change(n);
+        Console.WriteLine(&#34;Change After:  &#34; + n.value);
+        Console.ReadLine();
+
+    }
+}
+&#39;&#39;&#39;</pre></td></tr></table>
+</div>
+</div>
+<p>输出：
+Change Before:  1
+Change： 2
+Change After:  999</p>
+
+<p>我们传了一个地址到方法里，在方法里把这个地址的value变量改为了999，然后改变了方法内作为形参的引用变量的值，把这个引用类型指向了新的引用。结果并没有影响到实参。这里不能被输出的999混淆，输出999只是因为地址存储的变量变成了999，并不是通过改变原来的引用而改变输出值。</p>
+
+<p>值类型引用传递：
+&ldquo;&lsquo;cs
+        static void Change(ref int i)
+        {</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">        i += i;
+        Console.WriteLine(&#34;Change： &#34; + i);
+    }
+    static void Main(string[] args)
+    {
+        int n = 1;           
+        Console.WriteLine(&#34;Change Before:  &#34; + n);
+        Change(ref n);
+        Console.WriteLine(&#34;Change After:  &#34; + n);
+        Console.ReadLine();
+
+    }</pre></td></tr></table>
+</div>
+</div>
+<p>&rdquo;&rsquo;
+输出：
+Change Before:  1
+Change： 2
+Change After:  2
+可以看到我们通过改变了方法里形参的值而改变了实参的值。方法里的i变量实际不是int类型，而是实参n的引用。
+引用类型引用传递:
+&ldquo;&rsquo;
+    class RefType
+    {
+        public int value;
+    }
+    class Program
+    {</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">    static void Change(ref RefType i)
+    {
+        i.value = 999;
+        i = new RefType();
+        i.value = 2;
+        Console.WriteLine(&#34;Change： &#34; + i.value);
+    }
+    static void Main(string[] args)
+    {
+        RefType n = new RefType();
+        n.value = 1;
+        Console.WriteLine(&#34;Change Before:  &#34; + n.value);
+        Change(ref n);
+        Console.WriteLine(&#34;Change After:  &#34; + n.value);
+        Console.ReadLine();
+
+    }
+}</pre></td></tr></table>
+</div>
+</div>
+<p>&rdquo;&rsquo;
+输出：
+Change Before:  1
+Change： 2
+Change After:  2
+这里方法里的i变成了实参n的引用，改变i即改变了n。</p>
+
+<p>值传递可以看成新建了一个变量，他的值与实参的值一样，而形参如何改变是无法影响到实参的。 引用传递则是相当于形参就是实参，形参怎么改变实参会跟着变化。</p>
+
+<h2 id="4-堆栈">4.堆栈</h2>
+
+<p>C#里面的栈叫做堆栈，堆则一般称作托管堆。值类型存储在栈，引用类类型则是在托管堆中。系统把可用内存分为两部分，分别供堆和栈使用。</p>
+
+<p>堆栈的工作方式：
+&ldquo;&lsquo;cs
+{
+    int a;
+    {
+        int b;
+    }
+}
+&ldquo;&rsquo;
+比如上面的代码,a、b在创建时都在栈中占用了4个字节。而当b初了作用域之后，则b的所占用的内存进行释放。堆栈是向下填充的，即从高地址向低地址填充。当数据入栈后，堆栈指针就会随之调整，指向下一个自由空间。比如我们起始的地址为600000,a先声明，堆栈指针指向了599996,当声明时指向599992。当b出作用域后，指针指向599996。</p>
+
+<p>托管堆工作方式：
+&ldquo;&lsquo;cs
+    class RefType
+    {
+        public int value;
+        public int i;
+    }</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">static void Main(string[] args)
+{
+    RefType n；
+    n = new RefType();
+}</pre></td></tr></table>
+</div>
+</div>
+<p>&rdquo;&rsquo;
+    上面RefType n；中，声明了一个引用类型，此时并没有指向引用，这里使用了堆栈来存储引用地址，32位机占用了堆栈4个字节。n = new RefType();则在托管堆中申请了一块连续的内存来保存类。如果我们起始地址为200000，因为类中有两个int类型的值则指针指向了200008。</p>
+
+<h2 id="5-gc">5.GC</h2>
+
+<p>托管堆如其名，是托管在CLR，由GC进行释放的。
+CLR在运行时管理着一段内存地址空间（虚拟地址空间，在运行中会映射到物理内存地址中），分为“托管堆”和“栈”两部分，栈用于存储值类型数据，它会在方法执行结束后自动销毁其中引用的值类型变量，这一部分不属于垃圾收集的范围。托管堆用于引用类型的变量存储，是GC的主要位置。
+托管堆是一段连续的地址空间，其中所分配出去的空间呈现出类似数组形态的队列结构。当对象不再被引用时，内存被被释放，这样会导致内存变成一块一块的断层。当有新的对象生成时，.Net则需要搜索整个堆才能找到一块足够大的连续的空间。GC就是当释放了能释放的对象，压缩其他对象，使他们都在堆顶。这样所有对象的引用地址都需要更新，当声明新的对象就会快许多。</p>
+
+<p>上面提到了string类型和object类型是比较特殊的引用类型。这里就可以很好解释了。
+&ldquo;&lsquo;cs
+string str1=&ldquo;hello world&rdquo;;
+string str2=str1;
+str1=&ldquo;hello&rdquo;
+Console.WriteLine(str1+&rdquo; &ldquo;+str2 );
+&ldquo;&rsquo;
+则输出的是 hello hello world。并不是预想中的hello hello。这是因为string在赋值后，在堆中的内存已经是固定的了，再重新赋值所需内存大小发生变化，需要找一块新的连续的堆内存来存储。</p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">llyyc</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-03-07</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+          <a href="/tags/preview/">preview</a>
+          
+          <a href="/tags/shortcodes/">shortcodes</a>
+          
+          <a href="/tags/tag-6/">tag-6</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="490571953@qq.com" rel="me noopener" class="iconfont icon-email"
+        title="email" target="_blank">
+      </a>
+  <a href="https://llyyc.github.io/index.xml" rel="noopener" type="application/rss+xml" class="iconfont icon-rss"
+    title="rss" target="_blank">
+  </a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2018
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span><span class="author">llyyc</span></span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/dist/jane.min.js?v=2.7.0"></script>
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+</body>
+</html>
