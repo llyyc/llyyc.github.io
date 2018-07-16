@@ -65,7 +65,7 @@
 
 <meta property="article:published_time" content="2018-07-17T01:38:23&#43;08:00"/>
 
-<meta property="article:modified_time" content="2018-03-07T16:01:23&#43;08:00"/>
+<meta property="article:modified_time" content="2018-07-17T01:38:23&#43;08:00"/>
 
 
 
@@ -83,7 +83,7 @@
 
 <meta itemprop="datePublished" content="2018-07-17T01:38:23&#43;08:00" />
 <meta itemprop="dateModified" content="2018-07-17T01:38:23&#43;08:00" />
-<meta itemprop="wordCount" content="2434">
+<meta itemprop="wordCount" content="2492">
 
 
 
@@ -292,7 +292,7 @@
               <a href="/categories/c/"> C# </a>
             
           </div>
-        <span class="more-meta"> 2434 words </span>
+        <span class="more-meta"> 2492 words </span>
         <span class="more-meta"> 5 min read </span>
       </div>
     </header>
@@ -325,108 +325,157 @@
 
 <p>C#是强类型语言，类型大体分为两种，其一是值类型(如int,float,struct,enum)，另一种是引用类型(类,string,object 后两个比较特殊，后面会讲)。值类型的值是他本身，而引用类型则是类似保存了内存地址。show you the code。</p>
 
-<p>值类型:
- &ldquo;&lsquo;cs
-    public struct ValueTyepTest
-    {
-       public int iValue;
-    }
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            ValueTyepTest valueType1 = new ValueTyepTest();
-            valueType1.iValue = 1;
-            ValueTyepTest valueType2 = valueType1;
-            valueType1.iValue = 2;
-            Console.WriteLine(valueType2.iValue);
-            Console.ReadLine();</p>
+<p>值类型:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span></pre></td>
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">    }
-}</pre></td></tr></table>
-</div>
-</div>
-<p>&rdquo;&rsquo;
-输出结果是1。
-&ldquo;&lsquo;cs
-valueType1赋值给valueType2之后，两者没有关系了，各自的变化互不影响。</p>
+<pre class="chroma"><code class="language-cs" data-lang="cs">	<span class="k">public</span> <span class="k">struct</span> <span class="nc">ValueTyepTest</span>
+    <span class="p">{</span>
+       <span class="k">public</span> <span class="kt">int</span> <span class="n">iValue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">ValueTyepTest</span> <span class="n">valueType1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ValueTyepTest</span><span class="p">();</span>
+            <span class="n">valueType1</span><span class="p">.</span><span class="n">iValue</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+            <span class="n">ValueTyepTest</span> <span class="n">valueType2</span> <span class="p">=</span> <span class="n">valueType1</span><span class="p">;</span>
+            <span class="n">valueType1</span><span class="p">.</span><span class="n">iValue</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">valueType2</span><span class="p">.</span><span class="n">iValue</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
 
-<p>引用类型：
-  public class ValueTyepTest
-    {
-       public int iValue;
-    }
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            ValueTyepTest valueType1 = new ValueTyepTest();
-            valueType1.iValue = 1;
-            ValueTyepTest valueType2 = valueType1;
-            valueType1.iValue = 2;
-            Console.WriteLine(valueType2.iValue);
-            Console.ReadLine();</p>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>输出结果是1。</p>
+
+<p>valueType1赋值给valueType2之后，两者没有关系了，各自的变化互不影响。</p>
+
+<p>引用类型：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span></pre></td>
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">    }
-}</pre></td></tr></table>
+<pre class="chroma"><code class="language-cs" data-lang="cs">  <span class="k">public</span> <span class="k">class</span> <span class="nc">ValueTyepTest</span>
+    <span class="p">{</span>
+       <span class="k">public</span> <span class="kt">int</span> <span class="n">iValue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">ValueTyepTest</span> <span class="n">valueType1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ValueTyepTest</span><span class="p">();</span>
+            <span class="n">valueType1</span><span class="p">.</span><span class="n">iValue</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+            <span class="n">ValueTyepTest</span> <span class="n">valueType2</span> <span class="p">=</span> <span class="n">valueType1</span><span class="p">;</span>
+            <span class="n">valueType1</span><span class="p">.</span><span class="n">iValue</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">valueType2</span><span class="p">.</span><span class="n">iValue</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>&rdquo;&rsquo;
-输出结果是2。</p>
+<p>输出结果是2。</p>
 
 <p>这里只是把struct变成了class，变量类型则从值类型变为了引用类型。引用类型存的是变量的引用，我们这就把他当作地址看。valueType1存储了iValue=1的地址,valueType2=valueType1则使valueType2也指向了这段地址。valueType2.iValue=2使这段地址的iValue=2。输出结果就变成了2.</p>
 
 <h2 id="2-装箱拆箱">2.装箱拆箱</h2>
 
 <p>装箱就是把值类型封装为object的过程，拆箱则是相反的过程,以下是microsoft C#编程指南的示例代码:
-装箱:
-&ldquo;&lsquo;cs
-int i = 123;
-// The following line boxes i.
-object o = i;<br />
-拆箱:
-o = 123;
-i = (int)o;  // unboxing
-&ldquo;&rsquo;</p>
-
+装箱:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">123</span><span class="p">;</span>
+<span class="c1">// The following line boxes i.
+</span><span class="c1"></span><span class="kt">object</span> <span class="n">o</span> <span class="p">=</span> <span class="n">i</span><span class="p">;</span>  
+<span class="err">拆箱</span><span class="p">:</span>
+<span class="n">o</span> <span class="p">=</span> <span class="m">123</span><span class="p">;</span>
+<span class="n">i</span> <span class="p">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">o</span><span class="p">;</span>  <span class="p">//</span> <span class="n">unboxing</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>装箱可以写成object o = (object) i;  (object)可以省略，但是拆箱的(int)是不能省略的，这里主要还是考虑到类型安全，拆箱必须保证该值变量有足够的空间存储拆箱后得到的值，这里是需要十分注意的。</p>
 
 <h2 id="3-ref-out">3.ref/out</h2>
 
 <p>在C#中，方法的参数传递默认是按值传递的。而ref/out这两个关键字就可以使值类型变为引用传递。</p>
 
-<p>值类型值传递:
-&ldquo;&lsquo;cs
-        static void Change(int i)
-        {
-            i += i;
-            Console.WriteLine(&ldquo;Change： &rdquo; + i);
-        }
-        static void Main(string[] args)
-        {
-            int n = 1;
-            Console.WriteLine(&ldquo;Change Before:  &ldquo; + n);
-            Change(n);
-            Console.WriteLine(&ldquo;Change After:  &ldquo; + n);
-            Console.ReadLine();</p>
+<p>值类型值传递:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span></pre></td>
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">    }
-    &#39;&#39;&#39;</pre></td></tr></table>
+<pre class="chroma"><code class="language-cs" data-lang="cs">		<span class="k">static</span> <span class="k">void</span> <span class="n">Change</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">i</span> <span class="p">+=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change： &#34;</span> <span class="p">+</span> <span class="n">i</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">n</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change Before:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Change</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change After:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+
+        <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
 <p>输出：
@@ -435,17 +484,10 @@ Change： 2
 Change After:  1</p>
 
 <p>值传递就是把值赋给了形参，形参在作用域内相当于一个新的变量。在作用域内改变形参的值，不会改变外面实参的值。上面我们用值类型进行值传递，我们下面用引用类型进行值传递。
-引用类型值传递:
-&ldquo;&lsquo;cs
-    class  RefType
-    {
-       public int value;
-    }
-    class Program
-    {</p>
+引用类型值传递:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -464,27 +506,39 @@ Change After:  1</p>
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
-</span></pre></td>
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">    static void Change(RefType i)
-    {
-        i.value = 999;
-        i = new RefType();
-        i.value = 2;
-        Console.WriteLine(&#34;Change： &#34; + i.value);
-    }
-    static void Main(string[] args)
-    {
-        RefType n = new RefType();
-        n.value = 1;
-        Console.WriteLine(&#34;Change Before:  &#34; + n.value);
-        Change(n);
-        Console.WriteLine(&#34;Change After:  &#34; + n.value);
-        Console.ReadLine();
+<pre class="chroma"><code class="language-cs" data-lang="cs">	<span class="k">class</span>  <span class="nc">RefType</span>
+    <span class="p">{</span>
+       <span class="k">public</span> <span class="kt">int</span> <span class="k">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
 
-    }
-}
-&#39;&#39;&#39;</pre></td></tr></table>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Change</span><span class="p">(</span><span class="n">RefType</span> <span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">i</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">999</span><span class="p">;</span>
+            <span class="n">i</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RefType</span><span class="p">();</span>
+            <span class="n">i</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change： &#34;</span> <span class="p">+</span> <span class="n">i</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">RefType</span> <span class="n">n</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RefType</span><span class="p">();</span>
+            <span class="n">n</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change Before:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+            <span class="n">Change</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change After:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
 <p>输出：
@@ -494,13 +548,10 @@ Change After:  999</p>
 
 <p>我们传了一个地址到方法里，在方法里把这个地址的value变量改为了999，然后改变了方法内作为形参的引用变量的值，把这个引用类型指向了新的引用。结果并没有影响到实参。这里不能被输出的999混淆，输出999只是因为地址存储的变量变成了999，并不是通过改变原来的引用而改变输出值。</p>
 
-<p>值类型引用传递：
-&ldquo;&lsquo;cs
-        static void Change(ref int i)
-        {</p>
+<p>值类型引用传递：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -512,39 +563,37 @@ Change After:  999</p>
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">        i += i;
-        Console.WriteLine(&#34;Change： &#34; + i);
-    }
-    static void Main(string[] args)
-    {
-        int n = 1;           
-        Console.WriteLine(&#34;Change Before:  &#34; + n);
-        Change(ref n);
-        Console.WriteLine(&#34;Change After:  &#34; + n);
-        Console.ReadLine();
+<pre class="chroma"><code class="language-cs" data-lang="cs">		<span class="k">static</span> <span class="k">void</span> <span class="n">Change</span><span class="p">(</span><span class="k">ref</span> <span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+           
+            <span class="n">i</span> <span class="p">+=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change： &#34;</span> <span class="p">+</span> <span class="n">i</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">n</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>           
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change Before:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Change</span><span class="p">(</span><span class="k">ref</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change After:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
 
-    }</pre></td></tr></table>
+        <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>&rdquo;&rsquo;
-输出：
+<p>输出：
 Change Before:  1
 Change： 2
 Change After:  2
 可以看到我们通过改变了方法里形参的值而改变了实参的值。方法里的i变量实际不是int类型，而是实参n的引用。
-引用类型引用传递:
-&ldquo;&rsquo;
-    class RefType
-    {
-        public int value;
-    }
-    class Program
-    {</p>
+引用类型引用传递:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -562,30 +611,43 @@ Change After:  2
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
-</span></pre></td>
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">    static void Change(ref RefType i)
-    {
-        i.value = 999;
-        i = new RefType();
-        i.value = 2;
-        Console.WriteLine(&#34;Change： &#34; + i.value);
-    }
-    static void Main(string[] args)
-    {
-        RefType n = new RefType();
-        n.value = 1;
-        Console.WriteLine(&#34;Change Before:  &#34; + n.value);
-        Change(ref n);
-        Console.WriteLine(&#34;Change After:  &#34; + n.value);
-        Console.ReadLine();
+<pre class="chroma"><code class="language-cs" data-lang="cs">	<span class="k">class</span> <span class="nc">RefType</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="kt">int</span> <span class="k">value</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
 
-    }
-}</pre></td></tr></table>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Change</span><span class="p">(</span><span class="k">ref</span> <span class="n">RefType</span> <span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">i</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">999</span><span class="p">;</span>
+            <span class="n">i</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RefType</span><span class="p">();</span>
+            <span class="n">i</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">2</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change： &#34;</span> <span class="p">+</span> <span class="n">i</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">RefType</span> <span class="n">n</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RefType</span><span class="p">();</span>
+            <span class="n">n</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change Before:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+            <span class="n">Change</span><span class="p">(</span><span class="k">ref</span> <span class="n">n</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Change After:  &#34;</span> <span class="p">+</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>&rdquo;&rsquo;
-输出：
+<p>输出：
 Change Before:  1
 Change： 2
 Change After:  2
@@ -597,42 +659,57 @@ Change After:  2
 
 <p>C#里面的栈叫做堆栈，堆则一般称作托管堆。值类型存储在栈，引用类类型则是在托管堆中。系统把可用内存分为两部分，分别供堆和栈使用。</p>
 
-<p>堆栈的工作方式：
-&ldquo;&lsquo;cs
-{
-    int a;
-    {
-        int b;
-    }
-}
-&ldquo;&rsquo;
-比如上面的代码,a、b在创建时都在栈中占用了4个字节。而当b初了作用域之后，则b的所占用的内存进行释放。堆栈是向下填充的，即从高地址向低地址填充。当数据入栈后，堆栈指针就会随之调整，指向下一个自由空间。比如我们起始的地址为600000,a先声明，堆栈指针指向了599996,当声明时指向599992。当b出作用域后，指针指向599996。</p>
-
-<p>托管堆工作方式：
-&ldquo;&lsquo;cs
-    class RefType
-    {
-        public int value;
-        public int i;
-    }</p>
+<p>堆栈的工作方式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span><span class="lnt">6
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">static void Main(string[] args)
-{
-    RefType n；
-    n = new RefType();
-}</pre></td></tr></table>
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>&rdquo;&rsquo;
-    上面RefType n；中，声明了一个引用类型，此时并没有指向引用，这里使用了堆栈来存储引用地址，32位机占用了堆栈4个字节。n = new RefType();则在托管堆中申请了一块连续的内存来保存类。如果我们起始地址为200000，因为类中有两个int类型的值则指针指向了200008。</p>
+<p>比如上面的代码,a、b在创建时都在栈中占用了4个字节。而当b初了作用域之后，则b的所占用的内存进行释放。堆栈是向下填充的，即从高地址向低地址填充。当数据入栈后，堆栈指针就会随之调整，指向下一个自由空间。比如我们起始的地址为600000,a先声明，堆栈指针指向了599996,当声明时指向599992。当b出作用域后，指针指向599996。</p>
+
+<p>托管堆工作方式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs">	<span class="k">class</span> <span class="nc">RefType</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="kt">int</span> <span class="k">value</span><span class="p">;</span>
+		<span class="k">public</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+
+	<span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RefType</span> <span class="n">n</span><span class="err">；</span>
+		<span class="n">n</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RefType</span><span class="p">();</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>上面RefType n；中，声明了一个引用类型，此时并没有指向引用，这里使用了堆栈来存储引用地址，32位机占用了堆栈4个字节。n = new RefType();则在托管堆中申请了一块连续的内存来保存类。如果我们起始地址为200000，因为类中有两个int类型的值则指针指向了200008。</p>
 
 <h2 id="5-gc">5.GC</h2>
 
@@ -640,14 +717,22 @@ Change After:  2
 CLR在运行时管理着一段内存地址空间（虚拟地址空间，在运行中会映射到物理内存地址中），分为“托管堆”和“栈”两部分，栈用于存储值类型数据，它会在方法执行结束后自动销毁其中引用的值类型变量，这一部分不属于垃圾收集的范围。托管堆用于引用类型的变量存储，是GC的主要位置。
 托管堆是一段连续的地址空间，其中所分配出去的空间呈现出类似数组形态的队列结构。当对象不再被引用时，内存被被释放，这样会导致内存变成一块一块的断层。当有新的对象生成时，.Net则需要搜索整个堆才能找到一块足够大的连续的空间。GC就是当释放了能释放的对象，压缩其他对象，使他们都在堆顶。这样所有对象的引用地址都需要更新，当声明新的对象就会快许多。</p>
 
-<p>上面提到了string类型和object类型是比较特殊的引用类型。这里就可以很好解释了。
-&ldquo;&lsquo;cs
-string str1=&ldquo;hello world&rdquo;;
-string str2=str1;
-str1=&ldquo;hello&rdquo;
-Console.WriteLine(str1+&rdquo; &ldquo;+str2 );
-&ldquo;&rsquo;
-则输出的是 hello hello world。并不是预想中的hello hello。这是因为string在赋值后，在堆中的内存已经是固定的了，再重新赋值所需内存大小发生变化，需要找一块新的连续的堆内存来存储。</p>
+<p>上面提到了string类型和object类型是比较特殊的引用类型。这里就可以很好解释了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="kt">string</span> <span class="n">str1</span><span class="p">=</span><span class="s">&#34;hello world&#34;</span><span class="p">;</span>
+<span class="kt">string</span> <span class="n">str2</span><span class="p">=</span><span class="n">str1</span><span class="p">;</span>
+<span class="n">str1</span><span class="p">=</span><span class="s">&#34;hello&#34;</span>
+<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str1</span><span class="p">+</span><span class="s">&#34; &#34;</span><span class="p">+</span><span class="n">str2</span> <span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>则输出的是 hello hello world。并不是预想中的hello hello。这是因为string在赋值后，在堆中的内存已经是固定的了，再重新赋值所需内存大小发生变化，需要找一块新的连续的堆内存来存储。</p>
 
     </div>
 
@@ -660,7 +745,7 @@ Console.WriteLine(str1+&rdquo; &ldquo;+str2 );
   </p>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
-    <span class="item-content">2018-03-07</span>
+    <span class="item-content">2018-07-17</span>
   </p>
   
   <p class="copyright-item">
