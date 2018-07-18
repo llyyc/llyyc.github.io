@@ -6,10 +6,149 @@
     <description>Recent content on llyyc的个人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 17 Jul 2018 01:38:23 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 19 Jul 2018 01:00:23 +0800</lastBuildDate>
     
         <atom:link href="https://llyyc.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ulua的简单解析，cs和Lua的相互调用</title>
+      <link>https://llyyc.github.io/post/20180719/</link>
+      <pubDate>Thu, 19 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180719/</guid>
+      
+        <description>
+
+&lt;p&gt;热更新是unity一个长久的话题，热更新主要有两部分，一部分就是资源，这个靠u3d的assetbundle就可以做，另一部分就是逻辑了。游戏更新难免会遇到一些流程或者UI的逻辑变动。在PC和Android上可以使用C#的反射来动态的生成代码，而IOS的Full AOT（完全  预先编译/静态编译）的性质，因此这个办法在IOS上使用不了。为了解决这个问题，我们引入了Lua。使用Lua的主要原因是因为Lua在Unity是当作文本资源使用的，Lua在Unity中的执行是依赖于解释器(虚拟机)读取Lua代码进行解释执行。所以工程中比较常变化的逻辑代码都是写在Lua中，通过更新Lua（文本文件）来实现逻辑的热更，而常用的热更新方案有sLua,xLua,uLua等等。公司这里使用的是ulua，因此今天就来初步解析并使用下uLua。为了方便学习，本文章使用的是&lt;a href=&#34;https://github.com/jarjin/SimpleFramework_NGUI/&#34;&gt;SimpleFramework_NGUI_v0.4.1&lt;/a&gt;，这个集成了NGUI,uLua的框架。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-简单认识ulua&#34;&gt;1.简单认识uLua&lt;/h2&gt;
+
+&lt;p&gt;uLua具体怎么去调用Lua的，怎么让Lua调用C#这里先不做具体研究，先简单地使用起来，不去探究原理了。我们先认识下uLua中的几个类，让我们不至于使用得不明不白。当然如果想要直接使用，则可以跳过这个部分。&lt;/p&gt;
+
+&lt;h3 id=&#34;1-wrapfile-cs&#34;&gt;(1)WrapFile.cs&lt;/h3&gt;
+
+&lt;p&gt;WrapFile类的内容很简单，就是保存了一个需要生成Wrap的数组(binds)。通过_GT()方法来获取类的信息并标记类的类型。如果我们用C#写了个类想要在Lua中使用，可以在binds中添加&lt;/p&gt;
+
+&lt;h3 id=&#34;2-bindlua-cs&#34;&gt;(2)BindLua.cs&lt;/h3&gt;
+
+&lt;p&gt;BingLua.cs类里主要是uLua对Unity菜单栏的一些扩展。里面有一些批处理方法，比如Lua/Gen Lua Wrap Files实际上是调用了Binding()方法。这个方法用来遍历WrapFil里的binds数组，来生成相应的Wrap文件。而里面调用的GenLuaBinder()方法用来生成Wrap.lua和LuaBinder.cs。GenLuaDelegates()方法用来生成DelegateFactory.cs。
+&lt;img src=&#34;https://llyyc.github.io/image/ulua1.png&#34; alt=&#34;Binding()&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;3-wrap-lua&#34;&gt;(3)Wrap.lua&lt;/h3&gt;
+
+&lt;p&gt;Wrap.lua使用了&amp;rdquo;import 类名&amp;rdquo;把类注册到lua中，import字段是在Lua.cs的LuaState()方法来绑定到lua的全局表中，并且用来调用LuaStatic.importWrap()方法。因为我们要调用Lua时一般会用用到LuaScriptMgr.cs。在New LuaScriptMgr()时，则会自动调用LuaState()方法来绑定一些全局的字段。&lt;/p&gt;
+
+&lt;h3 id=&#34;4-luabinder-cs&#34;&gt;(4)LuaBinder.cs&lt;/h3&gt;
+
+&lt;p&gt;LuaBinder.Bind()方法则是用来把Wrap.lua里的类和相应的Wrap类，通过Wrap类的Register()方法来进行绑定。&lt;/p&gt;
+
+&lt;h3 id=&#34;5-delegatefactory-cs&#34;&gt;(5)DelegateFactory.cs&lt;/h3&gt;
+
+&lt;p&gt;大致和LuaBinder类似，用来注册委托。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;这样我们就知道通过Unity的菜单栏，uLua为我们做了什么事。我们该如何简单的使用uLua，下面我来演示一下。&lt;/p&gt;
+
+&lt;h2 id=&#34;2-简单使用ulua&#34;&gt;2.简单使用uLua&lt;/h2&gt;
+
+&lt;p&gt;首先，把AppConst.cs中的DebugMode设置为true，这是框架的设置。意思是我们会在Unity编辑器下来运行程序，而不是打包到具体平台上使用。当DebugMode为true时会读取工程的Lua文件夹来获取Lua文件。
+以后如果需要导出具体平台上的包则需要通过Game/Build xxx Resource  他会根据不同平台把lua和资源生成到相应的文件夹下。&lt;/p&gt;
+
+&lt;p&gt;我们先写一个cs用来注册到Lua中：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cs&#34; data-lang=&#34;cs&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cs&#34; data-lang=&#34;cs&#34;&gt;&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;CsToLuaTest&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CsToLuaTest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;void&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;testprint&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;Debug&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;success&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;这里有一个坑，我们写的这个类不能继承MonoBehaviour。因为继承了MonoBehaviour的类不能使用构造函数来创建对象，只能用AddComponent()来创建对象。而uLua是通过把注册到Lua中的类所有的构造方法绑定为New来创建对象的。如果从Unity中新建的脚本记得把MonoBehaviour删去。&lt;/p&gt;
+
+&lt;p&gt;再写一个Lua文件LuaTest.lua，用来在Lua中调用我们写的testprint()方法：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-Lua&#34; data-lang=&#34;Lua&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-Lua&#34; data-lang=&#34;Lua&#34;&gt;&lt;span class=&#34;kd&#34;&gt;local&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;this&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LuaTest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kr&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;LuaTest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;testprint&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;kr&#34;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;写一个类用来运行调用这个lua文件 StartTest.cs:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cs&#34; data-lang=&#34;cs&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cs&#34; data-lang=&#34;cs&#34;&gt;&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;StartTest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MonoBehaviour&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  
+    &lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Awake&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+   
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;c1&#34;&gt;// Use this for initialization
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;k&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Start&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;CsToLuaTest&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;test&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CsToLuaTest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;LuaScriptMgr&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LuaScriptMgr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;DoFile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;LuaTest.lua&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//这里放在工程中Lua文件夹下
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;mgr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CallLuaFunction&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;LuaTest.Test&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//传入一个CsToLuaTest对象
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;c1&#34;&gt;// Update is called once per frame
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;k&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Update&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;接下来打开WrapFile.cs，仿照着把CsToLuaTest写进binds中。在菜单栏中点击Lua/Clear LuaBinder + Wrap Files。这是清除之前已经生成的文件。然后再点击Lua/Gen Lua Wrap Files。这样就能生成Wrap文件并在Lua中进行注册了。
+把StartTest绑到场景中的物体上，运行游戏。就能看到我们在LuaTest.lua成功调用了CsToLuaTest.cs中的testprint()方法并打出了success的日志。
+&lt;img src=&#34;https://llyyc.github.io/image/ulua2.png&#34; alt=&#34;ulua菜单栏&#34; /&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>由变量类型、装箱拆箱、到ref/out到堆栈到GC</title>
