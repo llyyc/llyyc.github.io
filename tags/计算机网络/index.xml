@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计算机网络 on llyyc的个人博客</title>
+    <link>https://llyyc.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+    <description>Recent content in 计算机网络 on llyyc的个人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 27 Jul 2018 01:00:23 +0800</lastBuildDate>
+    
+	<atom:link href="https://llyyc.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>使用CSharp封装类简单实现TCP/UDP</title>
+      <link>https://llyyc.github.io/post/20180727/</link>
+      <pubDate>Fri, 27 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180727/</guid>
+      <description>C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就</description>
+    </item>
+    
+    <item>
+      <title>OSI七层模型与TCP/IP四层模型</title>
+      <link>https://llyyc.github.io/post/20180725/</link>
+      <pubDate>Wed, 25 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180725/</guid>
+      <description>以前虽然学校有学习过计算机网络，但是平时接触网络编程比较少，因此我对计算机网络只有个大概的印象。什么OSI七层模型，TCP/IP四层模型这样</description>
+    </item>
+    
+  </channel>
+</rss>

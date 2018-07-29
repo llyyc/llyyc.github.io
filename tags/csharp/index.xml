@@ -6,10 +6,19 @@
     <description>Recent content in Csharp on llyyc的个人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 17 Jul 2018 01:38:23 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 27 Jul 2018 01:00:23 +0800</lastBuildDate>
     
 	<atom:link href="https://llyyc.github.io/tags/csharp/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>使用CSharp封装类简单实现TCP/UDP</title>
+      <link>https://llyyc.github.io/post/20180727/</link>
+      <pubDate>Fri, 27 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180727/</guid>
+      <description>C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就</description>
+    </item>
     
     <item>
       <title>由变量类型、装箱拆箱、到ref/out到堆栈到GC</title>

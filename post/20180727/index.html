@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>使用CSharp封装类简单实现TCP/UDP - llyyc的个人博客</title>
+  <link rel="alternate" hreflang="en" href="https://llyyc.github.io" />
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="llyyc" />
+  <meta name="description" content="C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.44" />
+
+
+<link rel="canonical" href="https://llyyc.github.io/post/20180727/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+<link href="/dist/jane.min.css?v=2.7.0" rel="stylesheet">
+
+
+
+
+<meta property="og:title" content="使用CSharp封装类简单实现TCP/UDP" />
+<meta property="og:description" content="C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://llyyc.github.io/post/20180727/" />
+
+
+
+<meta property="article:published_time" content="2018-07-27T01:00:23&#43;08:00"/>
+
+<meta property="article:modified_time" content="2018-07-27T01:00:23&#43;08:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="使用CSharp封装类简单实现TCP/UDP">
+<meta itemprop="description" content="C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就">
+
+
+<meta itemprop="datePublished" content="2018-07-27T01:00:23&#43;08:00" />
+<meta itemprop="dateModified" content="2018-07-27T01:00:23&#43;08:00" />
+<meta itemprop="wordCount" content="2182">
+
+
+
+<meta itemprop="keywords" content="计算机网络,OSI七层模型,tcp/ip协议簇,Csharp," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用CSharp封装类简单实现TCP/UDP"/>
+<meta name="twitter:description" content="C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/categories/">Categories</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+       
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://llyyc.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">使用CSharp封装类简单实现TCP/UDP</h1>
+      
+      <div class="post-meta">
+        <span class="post-time"> 2018-07-27 </span>
+        <div class="post-category">
+            
+              <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
+            
+          </div>
+        <span class="more-meta"> 2182 words </span>
+        <span class="more-meta"> 5 min read </span>
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-socket-tcp">1.Socket TCP</a>
+<ul>
+<li><a href="#1-服务端">(1)服务端</a></li>
+<li><a href="#2-客户端">(2)客户端</a></li>
+</ul></li>
+<li><a href="#2-socket-udp">2.Socket UDP</a>
+<ul>
+<li><a href="#1-服务端-接收端">(1)服务端(接收端)</a></li>
+<li><a href="#2-客户端-发送端">(2)客户端(发送端)</a></li>
+</ul></li>
+<li><a href="#3-tcplistener-tcpclient-tcp">3.TcpListener/TcpClient TCP</a>
+<ul>
+<li><a href="#1-服务端-1">(1)服务端</a></li>
+<li><a href="#2-客户端-1">(2)客户端</a></li>
+</ul></li>
+<li><a href="#4-udpclient-udp">4.UdpClient UDP</a>
+<ul>
+<li><a href="#1-服务端-接收端-1">(1)服务端(接收端)</a></li>
+<li><a href="#2-客户端-发送端-1">(2)客户端(发送端)</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      
+
+<p>C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就是用四个类来实现最简单的TCP和UDP。</p>
+
+<h3 id="1-socket-tcp">1.Socket TCP</h3>
+
+<h4 id="1-服务端">(1)服务端</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+       <span class="cm">/*
+</span><span class="cm">    1：建立一个Socket对像；
+</span><span class="cm">
+</span><span class="cm">    2：用socket对像的Bind()方法绑定EndPoint；
+</span><span class="cm">
+</span><span class="cm">    3：用socket对像的Listen()方法开始监听；
+</span><span class="cm">
+</span><span class="cm">    4：接受到客户端的连接，用socket对像的Accept()方法创建新的socket对像用于和请求的客户端进行通信;
+</span><span class="cm">
+</span><span class="cm">    5：用新的socket对象接收（Receive）和发送（Send）消息。
+</span><span class="cm">     */</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//1.                              寻址方案               套接字类型           协议类型
+</span><span class="c1"></span>
+            <span class="n">Socket</span> <span class="n">tcpServer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Socket</span><span class="p">(</span><span class="n">AddressFamily</span><span class="p">.</span><span class="n">InterNetwork</span><span class="p">,</span> <span class="n">SocketType</span><span class="p">.</span><span class="n">Stream</span><span class="p">,</span> <span class="n">ProtocolType</span><span class="p">.</span><span class="n">Tcp</span><span class="p">);</span>
+
+            <span class="c1">//2.
+</span><span class="c1"></span>           
+            <span class="n">IPAddress</span> <span class="n">ipaddress</span> <span class="p">=</span> <span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">);</span>
+            <span class="n">EndPoint</span> <span class="n">endpoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span> <span class="m">8888</span><span class="p">);</span>     <span class="c1">//向操作系统申请一份可用的ip和端口号
+</span><span class="c1"></span>            <span class="n">tcpServer</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
+
+
+            <span class="c1">//3.
+</span><span class="c1"></span>
+            <span class="n">tcpServer</span><span class="p">.</span><span class="n">Listen</span><span class="p">(</span><span class="m">100</span><span class="p">);</span>              <span class="c1">//能同时接收100个客户端的请求
+</span><span class="c1"></span>            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;服务器启动完成&#34;</span><span class="p">);</span>
+            <span class="n">Socket</span> <span class="n">clientSocket</span> <span class="p">=</span> <span class="n">tcpServer</span><span class="p">.</span><span class="n">Accept</span><span class="p">();</span>  <span class="c1">//暂停当前线程，直到一个客户端连接过来，返回Socket对象 
+</span><span class="c1"></span>            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;接收到客户端的连接请求&#34;</span><span class="p">);</span>
+
+            <span class="c1">//4.
+</span><span class="c1"></span>
+            <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="s">&#34;Hello Client&#34;</span><span class="p">;</span>
+            <span class="kt">var</span> <span class="n">data</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>   <span class="c1">//将字符串转成字节数组
+</span><span class="c1"></span>            <span class="n">clientSocket</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;我向客户端发送了一条消息：&#34;</span> <span class="p">+</span> <span class="n">message</span><span class="p">);</span>
+
+            <span class="kt">byte</span><span class="na">[]</span> <span class="n">data2</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="na">[1024]</span><span class="p">;</span>            <span class="c1">//存放数组的容器
+</span><span class="c1"></span>            <span class="kt">int</span> <span class="n">length</span> <span class="p">=</span> <span class="n">clientSocket</span><span class="p">.</span><span class="n">Receive</span><span class="p">(</span><span class="n">data2</span><span class="p">);</span>
+            <span class="kt">string</span> <span class="n">message2</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;我接收到客户端发来的消息:&#34;</span> <span class="p">+</span> <span class="n">message2</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="2-客户端">(2)客户端</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="cm">/*
+</span><span class="cm">1：建立一个Socket对像；
+</span><span class="cm">
+</span><span class="cm">2：用socket对像的Connect()方法以上面建立的EndPoint对像做为参数，向服务器发出连接请求；
+</span><span class="cm">
+</span><span class="cm">3：如果连接成功，就用socket对像的Send()方法向服务器发送信息；
+</span><span class="cm">
+</span><span class="cm">4：用socket对像的Receive()方法接受服务器发来的信息 ;
+</span><span class="cm">
+</span><span class="cm">5：通信结束后一定记得关闭socket；
+</span><span class="cm">*/</span>
+   <span class="k">class</span> <span class="nc">Program</span>
+   <span class="p">{</span>  
+       
+      
+      <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+      <span class="p">{</span>
+            <span class="n">Socket</span> <span class="n">tcpClient</span><span class="p">;</span>
+            <span class="kt">string</span> <span class="n">serverIP</span> <span class="p">=</span> <span class="s">&#34;127.0.0.1&#34;</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">serverPort</span> <span class="p">=</span> <span class="m">8888</span><span class="p">;</span>
+          <span class="c1">//1.
+</span><span class="c1"></span>            <span class="k">try</span> <span class="p">{</span>
+                  <span class="n">tcpClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Socket</span><span class="p">(</span><span class="n">AddressFamily</span><span class="p">.</span><span class="n">InterNetwork</span><span class="p">,</span> <span class="n">SocketType</span><span class="p">.</span><span class="n">Stream</span><span class="p">,</span> <span class="n">ProtocolType</span><span class="p">.</span><span class="n">Tcp</span><span class="p">);</span><span class="c1">// 寻址方案               套接字类型           协议类型
+</span><span class="c1"></span> 
+
+                  <span class="c1">//2.
+</span><span class="c1"></span>
+                  <span class="n">IPAddress</span> <span class="n">ipaddress</span> <span class="p">=</span> <span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">serverIP</span><span class="p">);</span>
+                  <span class="n">EndPoint</span> <span class="n">endpoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span> <span class="n">serverPort</span><span class="p">);</span>
+                  <span class="n">tcpClient</span><span class="p">.</span><span class="n">Connect</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span><span class="c1">//发送连接请求
+</span><span class="c1"></span>                  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;请求服务器连接&#34;</span><span class="p">);</span>
+
+                  <span class="c1">//3.
+</span><span class="c1"></span>
+                  <span class="kt">byte</span><span class="na">[]</span> <span class="n">data</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="na">[1024]</span><span class="p">;</span>
+                  <span class="kt">int</span> <span class="n">length</span> <span class="p">=</span> <span class="n">tcpClient</span><span class="p">.</span><span class="n">Receive</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+                  <span class="kt">var</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+                  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;我接收到服务器发来的消息：&#34;</span> <span class="p">+</span> <span class="n">message</span><span class="p">);</span>
+
+                  <span class="c1">//4.
+</span><span class="c1"></span>
+                  <span class="kt">string</span> <span class="n">message2</span> <span class="p">=</span> <span class="s">&#34;这是我向服务器发送的消息&#34;</span><span class="p">;</span>
+                  <span class="n">tcpClient</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span><span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="n">message2</span><span class="p">));</span>
+                  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;我向服务器发送消息：&#34;</span> <span class="p">+</span> <span class="n">message2</span><span class="p">);</span>
+                  <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+            <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="2-socket-udp">2.Socket UDP</h3>
+
+<h4 id="1-服务端-接收端">(1)服务端(接收端)</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs">  <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//1.                                        寻址方案               套接字类型           协议类型    SocketType.Dgram,无连接。协议UDP。
+</span><span class="c1"></span>            <span class="n">Socket</span> <span class="n">udpserver</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Socket</span><span class="p">(</span><span class="n">AddressFamily</span><span class="p">.</span><span class="n">InterNetwork</span><span class="p">,</span> <span class="n">SocketType</span><span class="p">.</span><span class="n">Dgram</span><span class="p">,</span> <span class="n">ProtocolType</span><span class="p">.</span><span class="n">Udp</span><span class="p">);</span>
+
+            <span class="c1">//2.绑定IP 端口
+</span><span class="c1"></span>            <span class="n">IPAddress</span> <span class="n">ipaddress</span> <span class="p">=</span> <span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">);</span>
+            <span class="n">EndPoint</span> <span class="n">endpoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span> <span class="m">8888</span><span class="p">);</span>
+            <span class="n">udpserver</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">endpoint</span><span class="p">);</span>
+
+            <span class="c1">//3.不用监听，直接接收
+</span><span class="c1"></span>
+            <span class="n">EndPoint</span> <span class="n">remoteEndPoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">IPAddress</span><span class="p">.</span><span class="n">Any</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>       
+            <span class="kt">byte</span><span class="na">[]</span> <span class="n">data</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="na">[1024]</span><span class="p">;</span>
+            <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="p">{</span> 
+            <span class="kt">int</span> <span class="n">length</span> <span class="p">=</span> <span class="n">udpserver</span><span class="p">.</span><span class="n">ReceiveFrom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="k">ref</span> <span class="n">remoteEndPoint</span><span class="p">);</span>     
+
+            <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;服务器接收到客户端发来的消息：&#34;</span> <span class="p">+</span> <span class="n">message</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">udpserver</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="2-客户端-发送端">(2)客户端(发送端)</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"> <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//1.
+</span><span class="c1"></span>            <span class="n">Socket</span> <span class="n">udpclient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Socket</span><span class="p">(</span><span class="n">AddressFamily</span><span class="p">.</span><span class="n">InterNetwork</span><span class="p">,</span> <span class="n">SocketType</span><span class="p">.</span><span class="n">Dgram</span><span class="p">,</span> <span class="n">ProtocolType</span><span class="p">.</span><span class="n">Udp</span><span class="p">);</span>
+
+            <span class="c1">//2.
+</span><span class="c1"></span>
+            <span class="n">IPAddress</span> <span class="n">ipaddress</span> <span class="p">=</span> <span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">);</span>
+            <span class="n">EndPoint</span> <span class="n">serverpoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span> <span class="m">8888</span><span class="p">);</span>
+            <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+            <span class="kt">byte</span><span class="na">[]</span> <span class="n">data</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+            <span class="n">udpclient</span><span class="p">.</span><span class="n">SendTo</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">serverpoint</span><span class="p">);</span><span class="c1">//直接发送，不用连接
+</span><span class="c1"></span>            <span class="p">}</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这里就可以很直观的看出TCP和UDP的区别了，TCP需要建立连接后再传输数据。而UDP则不需要连接，只是向地址发送数据。</p>
+
+<h3 id="3-tcplistener-tcpclient-tcp">3.TcpListener/TcpClient TCP</h3>
+
+<h4 id="1-服务端-1">(1)服务端</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs">   <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//1.TcpListener对Socket进行封装，会自己创建一个Socket对象
+</span><span class="c1"></span>            <span class="n">TcpListener</span> <span class="n">tcpListener</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TcpListener</span><span class="p">(</span><span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">),</span> <span class="m">8888</span><span class="p">);</span>
+            <span class="k">try</span>
+            <span class="p">{</span>
+                <span class="c1">//2.开始监听
+</span><span class="c1"></span>                <span class="n">tcpListener</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+                <span class="c1">//3.等待连接
+</span><span class="c1"></span>                <span class="n">TcpClient</span> <span class="n">tcpClient</span> <span class="p">=</span> <span class="n">tcpListener</span><span class="p">.</span><span class="n">AcceptTcpClient</span><span class="p">();</span>
+                <span class="c1">//4.获取客户端发送的数据
+</span><span class="c1"></span>                <span class="n">NetworkStream</span> <span class="n">ns</span> <span class="p">=</span> <span class="n">tcpClient</span><span class="p">.</span><span class="n">GetStream</span><span class="p">();</span>
+                <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="kt">byte</span><span class="na">[]</span> <span class="n">date</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="na">[1024]</span><span class="p">;</span>
+                    <span class="kt">int</span> <span class="n">length</span> <span class="p">=</span> <span class="n">ns</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1024</span><span class="p">);</span>
+                    <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+                    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;收到信息： &#34;</span><span class="p">+</span><span class="n">message</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">message</span> <span class="p">==</span> <span class="s">&#34;stop&#34;</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">ns</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+                <span class="n">tcpClient</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+                <span class="n">tcpListener</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="2-客户端-1">(2)客户端</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">Online</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="n">IsOnline</span><span class="p">(</span><span class="k">this</span> <span class="n">TcpClient</span> <span class="n">c</span><span class="p">)</span><span class="c1">//该函数用来判断远程主机是否关闭连接
+</span><span class="c1"></span>        <span class="p">{</span>
+            <span class="k">return</span> <span class="p">!((</span><span class="n">c</span><span class="p">.</span><span class="n">Client</span><span class="p">.</span><span class="n">Poll</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span> <span class="n">SelectMode</span><span class="p">.</span><span class="n">SelectRead</span><span class="p">)</span> <span class="p">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">Client</span><span class="p">.</span><span class="n">Available</span> <span class="p">==</span> <span class="m">0</span><span class="p">))</span> <span class="p">||</span> <span class="p">!</span><span class="n">c</span><span class="p">.</span><span class="n">Client</span><span class="p">.</span><span class="n">Connected</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+       
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+    
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+            <span class="n">TcpClient</span> <span class="n">tcpClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TcpClient</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="m">8888</span><span class="p">);</span><span class="c1">//和远程主机建立连接
+</span><span class="c1"></span>            <span class="n">NetworkStream</span> <span class="n">ns</span> <span class="p">=</span> <span class="n">tcpClient</span><span class="p">.</span><span class="n">GetStream</span><span class="p">();</span><span class="c1">//通过网络流来传输数据
+</span><span class="c1"></span>            <span class="p">{</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">Online</span><span class="p">.</span><span class="n">IsOnline</span><span class="p">(</span><span class="n">tcpClient</span><span class="p">))</span>
+                <span class="p">{</span>
+                    <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+                    <span class="kt">byte</span><span class="na">[]</span> <span class="n">date</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="na">[1024]</span><span class="p">;</span>
+                    <span class="n">date</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+                    <span class="n">ns</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">date</span><span class="p">.</span><span class="n">Length</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;断开连接&#34;</span><span class="p">);</span>
+                <span class="n">ns</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+                <span class="n">tcpClient</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+        <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">){</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="4-udpclient-udp">4.UdpClient UDP</h3>
+
+<h4 id="1-服务端-接收端-1">(1)服务端(接收端)</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs">  <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">UdpClient</span> <span class="n">udpClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">UdpClient</span><span class="p">(</span><span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="p">),</span><span class="m">8888</span><span class="p">));</span><span class="c1">//绑定本机IP端口
+</span><span class="c1"></span>            <span class="k">try</span> <span class="p">{</span> 
+            <span class="k">while</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">IPEndPoint</span> <span class="n">ipEndPoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">IPAddress</span><span class="p">.</span><span class="n">Any</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+                <span class="kt">byte</span><span class="na">[]</span> <span class="n">data</span> <span class="p">=</span> <span class="n">udpClient</span><span class="p">.</span><span class="n">Receive</span><span class="p">(</span><span class="k">ref</span> <span class="n">ipEndPoint</span><span class="p">);</span>
+                <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">Length</span><span class="p">);</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;收到信息：&#34;</span> <span class="p">+</span> <span class="n">message</span><span class="p">);</span>
+   
+            <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">udpClient</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+            <span class="p">}</span>
+           
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="2-客户端-发送端-1">(2)客户端(发送端)</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cs" data-lang="cs">    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+             <span class="n">UdpClient</span> <span class="n">udpClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">UdpClient</span><span class="p">();</span>
+             <span class="k">try</span>
+             <span class="p">{</span>
+                 <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                 <span class="p">{</span>
+                     <span class="c1">//发送数据
+</span><span class="c1"></span>                     <span class="kt">string</span> <span class="n">message</span> <span class="p">=</span> <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
+                     <span class="kt">byte</span><span class="na">[]</span> <span class="n">data</span> <span class="p">=</span> <span class="n">Encoding</span><span class="p">.</span><span class="n">UTF8</span><span class="p">.</span><span class="n">GetBytes</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+                     <span class="n">IPEndPoint</span> <span class="n">ipEndPoint</span> <span class="p">=</span> <span class="k">new</span> <span class="n">IPEndPoint</span><span class="p">(</span><span class="n">IPAddress</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="s">&#34;127
+</span><span class="s"></span>                     <span class="m">0.0</span><span class="p">.</span><span class="m">1</span><span class="s">&#34;), 8888);
+</span><span class="s"></span>                     <span class="n">udpClient</span><span class="p">.</span><span class="n">Send</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">ipEndPoint</span><span class="p">);</span>
+                 <span class="p">}</span>
+
+             <span class="p">}</span>
+             <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+             <span class="p">{</span>
+                 <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+                 <span class="n">udpClient</span><span class="p">.</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">llyyc</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-07-27</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+          <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+          
+          <a href="/tags/osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">OSI七层模型</a>
+          
+          <a href="/tags/tcp/ip%E5%8D%8F%E8%AE%AE%E7%B0%87/">tcp/ip协议簇</a>
+          
+          <a href="/tags/csharp/">Csharp</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/20180725/">
+            <span class="next-text nav-default">OSI七层模型与TCP/IP四层模型</span>
+            <span class="prev-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="490571953@qq.com" rel="me noopener" class="iconfont icon-email"
+        title="email" target="_blank">
+      </a>
+  <a href="https://llyyc.github.io/index.xml" rel="noopener" type="application/rss+xml" class="iconfont icon-rss"
+    title="rss" target="_blank">
+  </a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2018
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span><span class="author">llyyc</span></span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/dist/jane.min.js?v=2.7.0"></script>
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+</body>
+</html>

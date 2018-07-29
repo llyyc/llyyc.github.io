@@ -6,10 +6,37 @@
     <description>Recent content in Posts on llyyc的个人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 19 Jul 2018 01:00:23 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 27 Jul 2018 01:00:23 +0800</lastBuildDate>
     
 	<atom:link href="https://llyyc.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>使用CSharp封装类简单实现TCP/UDP</title>
+      <link>https://llyyc.github.io/post/20180727/</link>
+      <pubDate>Fri, 27 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180727/</guid>
+      <description>C#已经为我们封装了简单易用的Socket,在这基础上更封装了TcpListener,TcpClient,UdpClient这三个类。这里就</description>
+    </item>
+    
+    <item>
+      <title>OSI七层模型与TCP/IP四层模型</title>
+      <link>https://llyyc.github.io/post/20180725/</link>
+      <pubDate>Wed, 25 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180725/</guid>
+      <description>以前虽然学校有学习过计算机网络，但是平时接触网络编程比较少，因此我对计算机网络只有个大概的印象。什么OSI七层模型，TCP/IP四层模型这样</description>
+    </item>
+    
+    <item>
+      <title>ulua官方案例解析</title>
+      <link>https://llyyc.github.io/post/20180721/</link>
+      <pubDate>Sat, 21 Jul 2018 01:00:23 +0800</pubDate>
+      
+      <guid>https://llyyc.github.io/post/20180721/</guid>
+      <description>之前我们简单解析uLua是如何让cs和Lua互相调用的。今天我们来分析下官方案例，并实现官方案例的热更新。这里我们需要使用到SimpleFr</description>
+    </item>
     
     <item>
       <title>ulua的简单解析，cs和Lua的相互调用</title>
